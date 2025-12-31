@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
-const REST_API_URL = "http://localhost:8080/api/students";
+const REST_API_URL = `${API_BASE_URL}/api/students`;
 
 export const listStudents = () => {
   return axios.get(REST_API_URL);
