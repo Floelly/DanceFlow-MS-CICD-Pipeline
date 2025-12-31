@@ -41,6 +41,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
+			<version>3.2.1</version> <!-- oder passende Version zu deinem Spring Boot -->
+		</dependency>
+
 	</dependencies>
 
 	<build>
