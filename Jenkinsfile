@@ -1,3 +1,27 @@
+def backendChanged() {
+    return currentBuild.changeSets.any { cs ->
+        cs.items.any { entry ->
+            entry.affectedFiles.any { f ->
+                f.path.startsWith('springboot-backend/') ||
+                f.path == 'Jenkinsfile' ||
+                f.path == 'LICENSE'
+            }
+        }
+    }
+}
+
+def frontendChanged() {
+    return currentBuild.changeSets.any { cs ->
+        cs.items.any { entry ->
+            entry.affectedFiles.any { f ->
+                f.path.startsWith('react-frontend/') ||
+                f.path == 'Jenkinsfile' ||
+                f.path == 'LICENSE'
+            }
+        }
+    }
+}
+
 pipeline {
     agent any
 
@@ -11,22 +35,54 @@ pipeline {
     // environment {}
 
     stages {
-
-        stage('Init') {
+        stage('Build Backend Image') {
+            when {
+                expression { backendChanged() }
+            }
             steps {
-                echo 'Init: Workspace vorbereiten'
+                dir('springboot-backend') {
+                    echo "Build Backend Docker image aus Dockerfile"
+                    sh "docker build -t danceflow-backend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                }
             }
         }
 
-        stage('Build') {
+        stage('Test Backend') {
+            when {
+                expression { backendChanged() }
+            }
             steps {
-                echo 'Build: noch kein echter Build konfiguriert'
+                dir('springboot-backend') {
+                    echo 'Test Backend (Maven)'
+                    sh 'mvn -B -ntp test'
+                    // später: junit 'target/surefire-reports/**/*.xml'
+                }
             }
         }
 
-        stage('Test') {
+        stage('Build Frontend') {
+            when {
+                expression { frontendChanged() }
+            }
             steps {
-                echo 'Test: Platzhalter für Unit-/Integrationstests'
+                dir('react-frontend') {
+                    echo 'Build Frontend (npm)'
+                    sh 'npm ci'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Test Frontend') {
+            when {
+                expression { frontendChanged() }
+            }
+            steps {
+                dir('react-frontend') {
+                    echo 'Test Frontend (npm)'
+                    // z.B.:
+                    // sh 'npm test -- --watch=false'
+                }
             }
         }
 
