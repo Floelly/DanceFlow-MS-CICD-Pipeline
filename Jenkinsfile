@@ -35,7 +35,7 @@ pipeline {
                 expression { false }
             }
             steps {
-                echo 'Deploy: hier kommt später Deployment hin'
+                echo 'Deploy: hier kommt später cranke Deployments hin'
             }
         }
     }
