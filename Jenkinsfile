@@ -44,6 +44,24 @@ pipeline {
     // environment {}
 
     stages {
+        stage('Test Backend') {
+            when {
+                expression { backendChanged() || previousBuildNotSuccessful() }
+            }
+            agent {
+                docker {
+                    image 'maven:3.9.9-eclipse-temurin-17'
+                }
+            }
+            steps {
+                dir('springboot-backend') {
+                    echo 'Run Backend Unit Tests (Maven in Docker Agent)'
+                    sh 'mvn -B -ntp test'
+                    junit 'target/surefire-reports/**/*.xml'
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             when {
                 expression { backendChanged() || previousBuildNotSuccessful() }
@@ -56,15 +74,21 @@ pipeline {
             }
         }
 
-        stage('Test Backend') {
+        stage('Test Frontend') {
             when {
-                expression { backendChanged() || previousBuildNotSuccessful() }
+                expression { frontendChanged() || previousBuildNotSuccessful() }
+            }
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                }
             }
             steps {
-                dir('springboot-backend') {
-                    echo 'Test Backend (Maven)'
-                    sh 'mvn -B -ntp test'
-                    // später: junit 'target/surefire-reports/**/*.xml'
+                dir('react-frontend') {
+                    echo 'Run Frontend Tests (npm in Docker Agent)'
+                    sh 'npm ci'
+                    sh 'npm test -- --watch=false'
+                    // später auch: sh 'npm run lint'
                 }
             }
         }
@@ -78,19 +102,6 @@ pipeline {
                     echo 'Build Frontend (npm)'
                     sh 'npm ci'
                     sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Test Frontend') {
-            when {
-                expression { frontendChanged() || previousBuildNotSuccessful() }
-            }
-            steps {
-                dir('react-frontend') {
-                    echo 'Test Frontend (npm)'
-                    // z.B.:
-                    // sh 'npm test -- --watch=false'
                 }
             }
         }
