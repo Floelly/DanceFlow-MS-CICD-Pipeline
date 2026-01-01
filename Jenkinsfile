@@ -6,13 +6,9 @@ pipeline {
         skipStagesAfterUnstable()
     }
 
-    triggers {
-        // Später z.B. pollSCM oder Git-Webhooks, vorerst leer
-    }
+    // triggers {}
 
-    environment {
-        // Platzhalter für ENV-Variablen (z.B. DOCKER_REGISTRY, MAVEN_OPTS)
-    }
+    // environment {}
 
     stages {
 
