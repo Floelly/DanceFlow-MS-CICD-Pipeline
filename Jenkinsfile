@@ -22,6 +22,15 @@ def frontendChanged() {
     }
 }
 
+def previousBuildNotSuccessful() {
+    def prev = currentBuild.previousBuild
+    // beim allerersten Lauf gibt es kein previousBuild
+    if (prev == null) {
+        return false
+    }
+    return prev.result != 'SUCCESS'
+}
+
 pipeline {
     agent any
 
@@ -37,7 +46,7 @@ pipeline {
     stages {
         stage('Build Backend Image') {
             when {
-                expression { backendChanged() }
+                expression { backendChanged() || previousBuildNotSuccessful() }
             }
             steps {
                 dir('springboot-backend') {
@@ -49,7 +58,7 @@ pipeline {
 
         stage('Test Backend') {
             when {
-                expression { backendChanged() }
+                expression { backendChanged() || previousBuildNotSuccessful() }
             }
             steps {
                 dir('springboot-backend') {
@@ -62,7 +71,7 @@ pipeline {
 
         stage('Build Frontend') {
             when {
-                expression { frontendChanged() }
+                expression { frontendChanged() || previousBuildNotSuccessful() }
             }
             steps {
                 dir('react-frontend') {
@@ -75,7 +84,7 @@ pipeline {
 
         stage('Test Frontend') {
             when {
-                expression { frontendChanged() }
+                expression { frontendChanged() || previousBuildNotSuccessful() }
             }
             steps {
                 dir('react-frontend') {
