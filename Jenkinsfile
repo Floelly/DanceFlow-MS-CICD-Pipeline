@@ -56,8 +56,8 @@ pipeline {
         FRONTEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-frontend"
         BACKEND_IMAGE_TAG = "${BACKEND_IMAGE}:pipeline-${PIPELINE_VERSION}.${env.BUILD_NUMBER}"
         FRONTEND_IMAGE_TAG = "${FRONTEND_IMAGE}:pipeline-${PIPELINE_VERSION}.${env.BUILD_NUMBER}"
-        BACKEND_IMAGE_LATEST = "${ARTIFACT_REGISTRY}/danceflow-backend:latest"
-        FRONTEND_IMAGE_LATEST = "${ARTIFACT_REGISTRY}/danceflow-frontend:latest"
+        BACKEND_IMAGE_LATEST = "${BACKEND_IMAGE}:latest"
+        FRONTEND_IMAGE_LATEST = "${FRONTEND_IMAGE}:latest"
     }
 
     options {
@@ -177,12 +177,26 @@ pipeline {
             }
         }
 
-        stage('Staging: Deploy Services') {
-            steps {
-                echo 'deploy new backend service to staging (soon)'
-                //sh 'ci/deploy-staging-backend.sh'
-                echo 'deploy new frontend service to staging (soon)'
-                //sh 'ci/deploy-staging-frontend.sh'
+        stage('Staging: Update Cloud Run Services') {
+            parallel {
+                stage('Backend') {
+                    steps {
+                        sh """
+                          SERVICE_NAME=${STAGING_BACKEND_SERVICE} \
+                          IMAGE=${BACKEND_IMAGE_LATEST} \
+                          bash ci/update-cloud-run-image.sh
+                        """
+                    }
+                }
+                stage('Frontend') {
+                    steps {
+                        sh """
+                          SERVICE_NAME=${STAGING_FRONTEND_SERVICE} \
+                          IMAGE=${FRONTEND_IMAGE_LATEST} \
+                          bash ci/update-cloud-run-image.sh
+                        """
+                    }
+                }
             }
         }
 
