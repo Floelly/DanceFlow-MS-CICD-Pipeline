@@ -67,6 +67,9 @@ pipeline {
 
     stages {
         stage('Test & Build') {
+            when {  // TODO: ACTIVATE
+                    expression { false }
+                }
             parallel {
                 stage('Backend') {
                     when {
@@ -134,6 +137,9 @@ pipeline {
         }
 
         stage('Publish Images') {
+            when {  // TODO: ACTIVATE
+                expression { false }
+            }
             steps {
                 script {
                     sh "gcloud auth configure-docker \${REGION}-docker.pkg.dev"
@@ -157,6 +163,9 @@ pipeline {
         }
 
         stage('Staging: DB Backup & Migration') {
+            when {  // TODO: ACTIVATE
+                expression { false }
+            }
             environment {
                     CLOUD_SQL_INSTANCE = "${STAGING_CLOUD_SQL_DB}"
                     DB_INSTANCE_CONNECTION_NAME = "${STAGING_DB_INSTANCE_CONNECTION_NAME}"
