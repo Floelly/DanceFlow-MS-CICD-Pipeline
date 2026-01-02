@@ -38,7 +38,7 @@ else
 
   echo "Restore backup id '${BACKUP_ID}' for instance '${CLOUD_SQL_INSTANCE}'..."
   gcloud sql backups restore "${BACKUP_ID}" \
-    --instance="${CLOUD_SQL_INSTANCE}"
+    --backup-instance="${CLOUD_SQL_INSTANCE}"
 
   echo "Restoration startet. Please verify integrity of Cloud SQL instance."
   exit 1
