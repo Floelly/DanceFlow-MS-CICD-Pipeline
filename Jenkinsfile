@@ -228,16 +228,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            echo 'Post: läuft immer (Cleanup/Archivierung/Notifications)'
-        }
-        success {
-            echo 'Post: Build erfolgreich'
-        }
-        failure {
-            echo 'Post: Build fehlgeschlagen'
-        }
-    }
 }
