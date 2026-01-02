@@ -45,9 +45,11 @@ pipeline {
         STAGING_BACKEND_SERVICE  = 'danceflow-ms-backend-staging'
         STAGING_FRONTEND_SERVICE = 'danceflow-ms-frontend-staging'
         STAGING_CLOUD_SQL_DB = 'danceflow-ms-staging-db'
+        STAGING_DB_INSTANCE_CONNECTION_NAME = "${GCP_PROJECT_ID}:${REGION}:${STAGING_CLOUD_SQL_DB}"
         PROD_BACKEND_SERVICE  = 'danceflow-ms-backend'
         PROD_FRONTEND_SERVICE = 'danceflow-ms-frontend'
         PROD_CLOUD_SQL_DB = 'danceflow-ms-prod-db'
+        DATABASE_SCHEMA_NAME = 'danceflow_ms'
 
         ARTIFACT_REGISTRY = "${REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${REPO_NAME}"
         BACKEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-backend"
@@ -161,10 +163,14 @@ pipeline {
         }
 
         stage('Staging: DB Backup & Migration') {
+            environment {
+                    CLOUD_SQL_INSTANCE = "${STAGING_CLOUD_SQL_DB}"
+                    DB_INSTANCE_CONNECTION_NAME = "${STAGING_DB_INSTANCE_CONNECTION_NAME}"
+
+                    FLYWAY_CREDS = credentials('danceflow-ms-staging-db-flyway-user')
+                }
             steps {
-                withEnv(["CLOUD_SQL_INSTANCE=${STAGING_CLOUD_SQL_DB}"]) {
-                            sh 'bash ci/migrate-cloud-sql.sh'
-                        }
+                sh 'bash ci/migrate-cloud-sql.sh'
             }
         }
 
