@@ -34,6 +34,20 @@ def previousBuildNotSuccessful() {
 pipeline {
     agent any
 
+    environment {
+        PIPELINE_VERSION = '0.2'
+        GCP_PROJECT_ID = 'danceflow-ms'  // Deine echte Projekt-ID
+        REGION = 'europe-west3'
+        REPO_NAME = 'danceflow-ms'
+        ARTIFACT_REGISTRY = "${REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${REPO_NAME}"
+        BACKEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-backend"
+        FRONTEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-frontend"
+        BACKEND_IMAGE_TAG = "${BACKEND_IMAGE}:pipeline-${PIPELINE_VERSION}.${env.BUILD_NUMBER}"
+        FRONTEND_IMAGE_TAG = "${FRONTEND_IMAGE}:pipeline-${PIPELINE_VERSION}.${env.BUILD_NUMBER}"
+        BACKEND_IMAGE_LATEST = "${ARTIFACT_REGISTRY}/danceflow-backend:latest"
+        FRONTEND_IMAGE_LATEST = "${ARTIFACT_REGISTRY}/danceflow-frontend:latest"
+    }
+
     options {
         buildDiscarder(logRotator(numToKeepStr: '20'))
         skipStagesAfterUnstable()
@@ -66,7 +80,7 @@ pipeline {
                             steps {
                                 dir('springboot-backend') {
                                     echo "Build Backend Docker image aus Dockerfile"
-                                    sh "docker build -t danceflow-backend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                                    sh "docker build -t ${BACKEND_IMAGE_TAG} ."
                                 }
                             }
                         }
@@ -98,7 +112,7 @@ pipeline {
                             steps {
                                 dir('react-frontend') {
                                     echo "Build Frontend Docker image aus Dockerfile"
-                                    sh "docker build -t danceflow-frontend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                                    sh "docker build -t ${FRONTEND_IMAGE_TAG} ."
                                 }
                             }
                         }
@@ -107,14 +121,30 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            when {
-                expression { false }
-            }
+        stage('Publish Images') {
             steps {
-                echo 'Deploy: hier kommt später cranke Deployments hin'
+                script {
+                    sh "gcloud auth configure-docker \${REGION}-docker.pkg.dev"
+
+                    parallel (
+                        "backend": {
+                            if (backendChanged() || previousBuildNotSuccessful()) {
+                                sh "docker push \${env.BACKEND_IMAGE_TAG}"
+                                sh "docker tag \${env.BACKEND_IMAGE_TAG} \${env.BACKEND_IMAGE_LATEST} && docker push \${env.BACKEND_IMAGE_LATEST}"
+                            }
+                        },
+                        "frontend": {
+                            if (frontendChanged() || previousBuildNotSuccessful()) {
+                                sh "docker push \${env.FRONTEND_IMAGE_TAG}"
+                                sh "docker tag \${env.FRONTEND_IMAGE_TAG} \${env.FRONTEND_IMAGE_LATEST} && docker push \${env.FRONTEND_IMAGE_LATEST}"
+                            }
+                        }
+                    )
+                }
             }
         }
+
+
     }
 
     post {
