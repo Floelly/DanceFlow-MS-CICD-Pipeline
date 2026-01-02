@@ -39,69 +39,78 @@ pipeline {
         skipStagesAfterUnstable()
     }
 
-    // triggers {}
-
-    // environment {}
-
     stages {
-        stage('Test Backend') {
-            when {
-                expression { backendChanged() || previousBuildNotSuccessful() }
-            }
-            agent {
-                docker {
-                    image 'maven:3.9.9-eclipse-temurin-17'
-                    args '-v /tmp/m2:/root/.m2'
-                }
-            }
-            steps {
-                dir('springboot-backend') {
-                    echo 'Run Backend Unit Tests (Maven in Docker Agent)'
-                    sh 'mvn -B -ntp test'
-                    // junit 'target/surefire-reports/**/*.xml'
-                }
+        stage('Test & Build') {
+            parallel {
+
             }
         }
 
-        stage('Build Backend Image') {
-            when {
-                expression { backendChanged() || previousBuildNotSuccessful() }
-            }
-            steps {
-                dir('springboot-backend') {
-                    echo "Build Backend Docker image aus Dockerfile"
-                    sh "docker build -t danceflow-backend:pipeline-0.1-${env.BUILD_NUMBER} ."
-                }
-            }
-        }
+        stages {
+            stage('Build & Test') {
+                parallel {
+                    stage('Backend') {
+                        when {
+                            expression { backendChanged() || previousBuildNotSuccessful() }
+                        }
+                        stages {
+                            stage('Test Backend') {
+                                agent {
+                                    docker {
+                                        image 'maven:3.9.9-eclipse-temurin-17'
+                                        args '-v /tmp/m2:/root/.m2'
+                                    }
+                                }
+                                steps {
+                                    dir('springboot-backend') {
+                                        echo 'Run Backend Unit Tests (Maven in Docker Agent)'
+                                        sh 'mvn -B -ntp test'
+                                        // junit 'target/surefire-reports/**/*.xml'
+                                    }
+                                }
+                            }
+                            stage('Build Backend Image') {
+                                steps {
+                                    dir('springboot-backend') {
+                                        echo "Build Backend Docker image aus Dockerfile"
+                                        sh "docker build -t danceflow-backend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-        stage('Test Frontend') {
-            when {
-                expression { frontendChanged() || previousBuildNotSuccessful() }
-            }
-            agent {
-                docker {
-                    image 'node:20-alpine'
-                }
-            }
-            steps {
-                dir('react-frontend') {
-                    echo 'Run Frontend Tests (npm in Docker Agent)'
-                    sh 'npm ci'
-                    sh 'npm run lint'
-                    sh 'npm run test'
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            when {
-                expression { frontendChanged() || previousBuildNotSuccessful() }
-            }
-            steps {
-                dir('react-frontend') {
-                    echo "Build Frontend Docker image aus Dockerfile"
-                    sh "docker build -t danceflow-frontend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                    stage('Frontend') {
+                        when {
+                            expression { frontendChanged() || previousBuildNotSuccessful() }
+                        }
+                        stages {
+                            stage('Test Frontend') {
+                                agent {
+                                    docker {
+                                        image 'node:20-alpine'
+                                        args '-u root:root'
+                                    }
+                                }
+                                steps {
+                                    dir('react-frontend') {
+                                        echo 'Run Frontend Tests (npm in Docker Agent)'
+                                        sh 'npm ci'
+                                        sh 'npm run lint'
+                                        sh 'npm run test'
+                                    }
+                                }
+                            }
+                            stage('Build Frontend Image') {
+                                steps {
+                                    dir('react-frontend') {
+                                        echo "Build Frontend Docker image aus Dockerfile"
+                                        sh "docker build -t danceflow-frontend:pipeline-0.1-${env.BUILD_NUMBER} ."
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
