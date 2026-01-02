@@ -103,9 +103,8 @@ pipeline {
             }
             steps {
                 dir('react-frontend') {
-                    echo 'Build Frontend (npm)'
-                    sh 'npm ci'
-                    sh 'npm run build'
+                    echo "Build Frontend Docker image aus Dockerfile"
+                    sh "docker build -t danceflow-frontend:pipeline-0.1-${env.BUILD_NUMBER} ."
                 }
             }
         }
