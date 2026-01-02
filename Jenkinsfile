@@ -82,6 +82,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:20-alpine'
+                    args '-u root:root'
                 }
             }
             steps {
@@ -89,8 +90,7 @@ pipeline {
                     echo 'Run Frontend Tests (npm in Docker Agent)'
                     sh 'npm install'
                     sh 'npm run lint'
-                    sh 'npm test -- --watch=false'
-                    // später auch: sh 'npm run lint'
+                    sh 'npm run test'
                 }
             }
         }
