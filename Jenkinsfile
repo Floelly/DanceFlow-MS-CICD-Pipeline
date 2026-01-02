@@ -39,7 +39,7 @@ pipeline {
     environment {
         PIPELINE_VERSION = '0.2'
 
-        GCP_PROJECT_ID = 'danceflow-ms'  // Deine echte Projekt-ID
+        GCP_PROJECT_ID = 'danceflow-ms'
         REGION = 'europe-west3'
         REPO_NAME = 'danceflow-ms'
         STAGING_BACKEND_SERVICE  = 'danceflow-ms-backend-staging'

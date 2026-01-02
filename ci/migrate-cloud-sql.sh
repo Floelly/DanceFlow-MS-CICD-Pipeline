@@ -8,6 +8,7 @@ fi
 
 PIPELINE_VERSION="${PIPELINE_VERSION:-unknown}"
 BUILD_NUMBER="${BUILD_NUMBER:-0}"
+GCP_PROJECT_ID="${GCP_PROJECT_ID:-danceflow-ms}"
 
 DESCRIPTION="jenkins-${PIPELINE_VERSION}-build-${BUILD_NUMBER}"
 
@@ -38,7 +39,9 @@ else
 
   echo "Restore backup id '${BACKUP_ID}' for instance '${CLOUD_SQL_INSTANCE}'..."
   gcloud sql backups restore "${BACKUP_ID}" \
-    --backup-instance="${CLOUD_SQL_INSTANCE}"
+    --restore-instance="${CLOUD_SQL_INSTANCE}" \
+    --project="${GCP_PROJECT_ID}" \
+    --quiet
 
   echo "Restoration startet. Please verify integrity of Cloud SQL instance."
   exit 1
