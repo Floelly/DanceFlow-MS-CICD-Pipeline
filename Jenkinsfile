@@ -209,15 +209,15 @@ pipeline {
             }
         }
 
-        stage('Production Approval') {
-            options {
-                timeout(time: 1, unit: 'HOURS')
-            }
-            input {
-                message "Deploy nach Production?"
-                ok "Deploy"
-            }
-        }
+//         stage('Production Approval') {
+//             options {
+//                 timeout(time: 1, unit: 'HOURS')
+//             }
+//             input {
+//                 message "Deploy nach Production?"
+//                 ok "Deploy"
+//             }
+//         }
 
         stage('deploy to production') {
             when {
