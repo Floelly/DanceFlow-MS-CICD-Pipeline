@@ -42,12 +42,6 @@ pipeline {
     stages {
         stage('Test & Build') {
             parallel {
-
-            }
-        }
-
-        stage('Test & Build') {
-            parallel {
                 stage('Backend') {
                     when {
                         expression { backendChanged() || previousBuildNotSuccessful() }
