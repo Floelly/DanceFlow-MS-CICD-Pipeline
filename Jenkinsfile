@@ -33,6 +33,11 @@ def previousBuildNotSuccessful() {
     return prev.result != 'SUCCESS'
 }
 
+def pushAndTag(imageTag, latestTag) {
+    sh "docker push ${imageTag}"
+    sh "docker tag ${imageTag} ${latestTag} && docker push ${latestTag}"
+}
+
 pipeline {
     agent any
 
@@ -147,14 +152,12 @@ pipeline {
                     parallel (
                         "backend": {
                             if (backendChanged() || previousBuildNotSuccessful()) {
-                                sh "docker push \${BACKEND_IMAGE_TAG}"
-                                sh "docker tag \${BACKEND_IMAGE_TAG} \${BACKEND_IMAGE_LATEST} && docker push \${BACKEND_IMAGE_LATEST}"
+                                script { pushAndTag(BACKEND_IMAGE_TAG, BACKEND_IMAGE_LATEST) }
                             }
                         },
                         "frontend": {
                             if (frontendChanged() || previousBuildNotSuccessful()) {
-                                sh "docker push \${FRONTEND_IMAGE_TAG}"
-                                sh "docker tag \${FRONTEND_IMAGE_TAG} \${FRONTEND_IMAGE_LATEST} && docker push \${FRONTEND_IMAGE_LATEST}"
+                                script { pushAndTag(FRONTEND_IMAGE_TAG, FRONTEND_IMAGE_LATEST) }
                             }
                         }
                     )
@@ -206,13 +209,22 @@ pipeline {
             }
         }
 
+        stage('Production Approval') {
+            options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            input {
+                message "Deploy nach Production?"
+                ok "Deploy"
+            }
+        }
+
         stage('deploy to production') {
             when {
                 expression { false }
             }
             steps {
-                echo 'wait for manual approval'
-                echo 'Deploy soon'
+                echo 'not implemented! add similar deployment steps like in staging'
             }
         }
     }
