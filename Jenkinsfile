@@ -44,10 +44,10 @@ pipeline {
         REPO_NAME = 'danceflow-ms'
         STAGING_BACKEND_SERVICE  = 'danceflow-ms-backend-staging'
         STAGING_FRONTEND_SERVICE = 'danceflow-ms-frontend-staging'
-        STAGING_CLOUD_SQL_DB = 'danceflow-ms-db-staging'
+        STAGING_CLOUD_SQL_DB = 'danceflow-ms-staging-db'
         PROD_BACKEND_SERVICE  = 'danceflow-ms-backend'
         PROD_FRONTEND_SERVICE = 'danceflow-ms-frontend'
-        PROD_CLOUD_SQL_DB = 'danceflow-ms-db-prod'
+        PROD_CLOUD_SQL_DB = 'danceflow-ms-prod-db'
 
         ARTIFACT_REGISTRY = "${REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${REPO_NAME}"
         BACKEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-backend"
