@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import { Link } from "react-router-dom";
 
 const ButtonLink = ({ text, toAction }) => {
@@ -7,5 +9,13 @@ const ButtonLink = ({ text, toAction }) => {
     </Link>
   );
 };
+
+ButtonLink.propTypes = {
+  text: PropTypes.string.isRequired,
+  toAction: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]).isRequired
+}
 
 export default ButtonLink;
