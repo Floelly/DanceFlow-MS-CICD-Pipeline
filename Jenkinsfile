@@ -38,9 +38,17 @@ pipeline {
 
     environment {
         PIPELINE_VERSION = '0.2'
+
         GCP_PROJECT_ID = 'danceflow-ms'  // Deine echte Projekt-ID
         REGION = 'europe-west3'
         REPO_NAME = 'danceflow-ms'
+        STAGING_BACKEND_SERVICE  = 'danceflow-ms-backend-staging'
+        STAGING_FRONTEND_SERVICE = 'danceflow-ms-frontend-staging'
+        STAGING_CLOUD_SQL_DB = 'danceflow-ms-db-staging'
+        PROD_BACKEND_SERVICE  = 'danceflow-ms-backend'
+        PROD_FRONTEND_SERVICE = 'danceflow-ms-frontend'
+        PROD_CLOUD_SQL_DB = 'danceflow-ms-db-prod'
+
         ARTIFACT_REGISTRY = "${REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${REPO_NAME}"
         BACKEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-backend"
         FRONTEND_IMAGE = "${ARTIFACT_REGISTRY}/danceflow-frontend"
