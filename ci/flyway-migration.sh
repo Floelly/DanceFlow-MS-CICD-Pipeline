@@ -20,8 +20,8 @@ docker run --rm \
   maven:3.9.9-eclipse-temurin-17 \
   bash -c 'mvn -B -ntp flyway:migrate \
            -Dflyway.url=$FLYWAY_URL \
-           -Dflyway.user=$FLYWAY_CREDS_USR \
-           -Dflyway.password=$FLYWAY_CREDS_PSW'
+           -Dflyway.user=$FLYWAY_USER \
+           -Dflyway.password=$FLYWAY_PASSWORD'
 MIGRATION_EXIT=$?
 set -e
 
