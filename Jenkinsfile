@@ -156,10 +156,9 @@ pipeline {
 
         stage('Staging: DB Backup & Migration') {
             steps {
-                echo 'start backing up staging databas (soon)'
-                //sh 'ci/backup-staging-db.sh'
-                echo 'start migrating staging databas (soon)'
-                //sh 'ci/migrate-staging-db.sh'
+                withEnv(["CLOUD_SQL_INSTANCE=${STAGING_CLOUD_SQL_DB}"]) {
+                            sh 'ci/migrate-cloud-sql.sh'
+                        }
             }
         }
 
