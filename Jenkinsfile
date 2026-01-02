@@ -88,7 +88,7 @@ pipeline {
             steps {
                 dir('react-frontend') {
                     echo 'Run Frontend Tests (npm in Docker Agent)'
-                    sh 'npm install'
+                    sh 'npm ci'
                     sh 'npm run lint'
                     sh 'npm run test'
                 }
