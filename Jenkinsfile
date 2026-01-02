@@ -86,8 +86,14 @@ pipeline {
             }
             steps {
                 dir('react-frontend') {
+                    echo 'check npm version'
+                    sh 'npm -v'
+                    echo 'check node version'
+                    sh 'node -v'
+
                     echo 'Run Frontend Tests (npm in Docker Agent)'
                     sh 'npm ci'
+                    sh 'npm run lint'
                     sh 'npm test -- --watch=false'
                     // später auch: sh 'npm run lint'
                 }
