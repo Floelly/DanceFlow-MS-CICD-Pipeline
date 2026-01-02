@@ -67,9 +67,6 @@ pipeline {
 
     stages {
         stage('Test & Build') {
-            when {  // TODO: ACTIVATE
-                    expression { false }
-                }
             parallel {
                 stage('Backend') {
                     when {
@@ -137,9 +134,6 @@ pipeline {
         }
 
         stage('Publish Images') {
-            when {  // TODO: ACTIVATE
-                expression { false }
-            }
             steps {
                 script {
                     sh "gcloud auth configure-docker \${REGION}-docker.pkg.dev"
