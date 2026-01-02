@@ -11,10 +11,10 @@ DESCRIPTION="jenkins-${PIPELINE_VERSION}-build-${BUILD_NUMBER}"
 
 echo "Backup Cloud SQL instance '${CLOUD_SQL_INSTANCE}' with description '${DESCRIPTION}'..."
 
-gcloud sql backups create \
-  --instance="${CLOUD_SQL_INSTANCE}" \
-  --project="${GCP_PROJECT_ID}" \
-  --description="${DESCRIPTION}"
+#gcloud sql backups create \
+#  --instance="${CLOUD_SQL_INSTANCE}" \
+#  --project="${GCP_PROJECT_ID}" \
+#  --description="${DESCRIPTION}"
 
 echo "Backup for '${CLOUD_SQL_INSTANCE}' successful."
 echo "Start Flyway migration..."
