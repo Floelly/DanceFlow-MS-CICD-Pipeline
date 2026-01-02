@@ -146,29 +146,27 @@ pipeline {
             }
         }
 
-        stage('Staging Pipeline') {
-            stages {
-                stage('DB Backup & Migration') {
-                    steps {
-                        echo 'start backing up staging databas (soon)'
-                        //sh 'ci/backup-staging-db.sh'
-                        echo 'start migrating staging databas (soon)'
-                        //sh 'ci/migrate-staging-db.sh'
-                    }
-                }
-                stage('Deploy Staging Services') {
-                    steps {
-                        echo 'deploy new backend service to staging (soon)'
-                        //sh 'ci/deploy-staging-backend.sh'
-                        echo 'deploy new frontend service to staging (soon)'
-                        //sh 'ci/deploy-staging-frontend.sh'
-                    }
-                }
-                stage('Staging Smoke Tests') {
-                    steps {
-                        echo 'not implemented! add smoke tests or integration tests here later'
-                    }
-                }
+        stage('Staging: DB Backup & Migration') {
+            steps {
+                echo 'start backing up staging databas (soon)'
+                //sh 'ci/backup-staging-db.sh'
+                echo 'start migrating staging databas (soon)'
+                //sh 'ci/migrate-staging-db.sh'
+            }
+        }
+
+        stage('Staging: Deploy Services') {
+            steps {
+                echo 'deploy new backend service to staging (soon)'
+                //sh 'ci/deploy-staging-backend.sh'
+                echo 'deploy new frontend service to staging (soon)'
+                //sh 'ci/deploy-staging-frontend.sh'
+            }
+        }
+
+        stage('Staging: Smoke Tests') {
+            steps {
+                echo 'not implemented! add smoke tests or integration tests here later'
             }
         }
 
