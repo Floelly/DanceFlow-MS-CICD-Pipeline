@@ -44,13 +44,6 @@ pipeline {
     // environment {}
 
     stages {
-        stage('Checkout') {
-          steps {
-            deleteDir()
-            checkout scm
-          }
-        }
-
         stage('Test Backend') {
             when {
                 expression { backendChanged() || previousBuildNotSuccessful() }
