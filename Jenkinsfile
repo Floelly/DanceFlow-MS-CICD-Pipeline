@@ -3,6 +3,7 @@ def backendChanged() {
         cs.items.any { entry ->
             entry.affectedFiles.any { f ->
                 f.path.startsWith('springboot-backend/') ||
+                f.path.startsWith('ci/') ||
                 f.path == 'Jenkinsfile' ||
                 f.path == 'LICENSE'
             }
@@ -15,6 +16,7 @@ def frontendChanged() {
         cs.items.any { entry ->
             entry.affectedFiles.any { f ->
                 f.path.startsWith('react-frontend/') ||
+                f.path.startsWith('ci/') ||
                 f.path == 'Jenkinsfile' ||
                 f.path == 'LICENSE'
             }
@@ -141,6 +143,42 @@ pipeline {
                         }
                     )
                 }
+            }
+        }
+
+        stage('Staging Pipeline') {
+            stages {
+                stage('DB Backup & Migration') {
+                    steps {
+                        echo 'start backing up staging databas (soon)'
+                        //sh 'ci/backup-staging-db.sh'
+                        echo 'start migrating staging databas (soon)'
+                        //sh 'ci/migrate-staging-db.sh'
+                    }
+                }
+                stage('Deploy Staging Services') {
+                    steps {
+                        echo 'deploy new backend service to staging (soon)'
+                        //sh 'ci/deploy-staging-backend.sh'
+                        echo 'deploy new frontend service to staging (soon)'
+                        //sh 'ci/deploy-staging-frontend.sh'
+                    }
+                }
+                stage('Staging Smoke Tests') {
+                    steps {
+                        echo 'not implemented! add smoke tests or integration tests here later'
+                    }
+                }
+            }
+        }
+
+        stage('deploy to production') {
+            when {
+                expression { false }
+            }
+            steps {
+                echo 'wait for manual approval'
+                echo 'Deploy soon'
             }
         }
     }
