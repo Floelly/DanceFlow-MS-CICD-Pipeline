@@ -88,13 +88,15 @@ pipeline {
             }
             agent {
                 docker {
-                    image 'node:20-alpine'
+                    image 'node:20-bullseye'
                     args '-u root:root'
                 }
             }
             steps {
                 dir('react-frontend') {
                     echo 'Run Frontend Tests (npm in Docker Agent)'
+                    sh 'rm -rf node_modules package-lock.json'
+                    sh 'npm cache clean --force'
                     sh 'npm install'
                     sh 'npm run lint'
                     sh 'npm run test'
