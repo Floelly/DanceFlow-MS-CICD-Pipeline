@@ -129,14 +129,14 @@ pipeline {
                     parallel (
                         "backend": {
                             if (backendChanged() || previousBuildNotSuccessful()) {
-                                sh "docker push \${env.BACKEND_IMAGE_TAG}"
-                                sh "docker tag \${env.BACKEND_IMAGE_TAG} \${env.BACKEND_IMAGE_LATEST} && docker push \${env.BACKEND_IMAGE_LATEST}"
+                                sh "docker push \${BACKEND_IMAGE_TAG}"
+                                sh "docker tag \${BACKEND_IMAGE_TAG} \${BACKEND_IMAGE_LATEST} && docker push \${BACKEND_IMAGE_LATEST}"
                             }
                         },
                         "frontend": {
                             if (frontendChanged() || previousBuildNotSuccessful()) {
-                                sh "docker push \${env.FRONTEND_IMAGE_TAG}"
-                                sh "docker tag \${env.FRONTEND_IMAGE_TAG} \${env.FRONTEND_IMAGE_LATEST} && docker push \${env.FRONTEND_IMAGE_LATEST}"
+                                sh "docker push \${FRONTEND_IMAGE_TAG}"
+                                sh "docker tag \${FRONTEND_IMAGE_TAG} \${FRONTEND_IMAGE_LATEST} && docker push \${FRONTEND_IMAGE_LATEST}"
                             }
                         }
                     )
