@@ -89,7 +89,7 @@ pipeline {
                                 dir('springboot-backend') {
                                     echo 'Run Backend Unit Tests (Maven in Docker Agent)'
                                     sh 'mvn -B -ntp test'
-                                    // junit 'target/surefire-reports/**/*.xml'
+                                    echo 'IMPLEMENT MORE CODE QUALITY CHECKS HERE (E.G. CODE COVERAGE)'
                                 }
                             }
                         }
@@ -122,6 +122,7 @@ pipeline {
                                     sh 'npm ci'
                                     sh 'npm run lint'
                                     sh 'npm run test'
+                                    echo 'IMPLEMENT MORE CODE QUALITY CHECKS HERE'
                                 }
                             }
                         }
